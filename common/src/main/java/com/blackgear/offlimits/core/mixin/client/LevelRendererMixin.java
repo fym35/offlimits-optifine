@@ -16,16 +16,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LevelRendererMixin {
     @ModifyConstant(
         method = "getRelativeFrom",
-        constant = @Constant(intValue = 256)
+        constant = @Constant(intValue = 256),
+        require = 0
     )
     private int offlimits$getRelativeFrom(int original) {
         return Offlimits.INSTANCE.getMaxBuildHeight();
     }
-    
+
     @Inject(
         method = "getRelativeFrom",
         at = @At("HEAD"),
-        cancellable = true
+        cancellable = true,
+        require = 0
     )
     private void off$getRelativeFrom(BlockPos playerPos, ChunkRenderDispatcher.RenderChunk renderChunkBase, Direction facing, CallbackInfoReturnable<ChunkRenderDispatcher.RenderChunk> cir) {
         BlockPos pos = renderChunkBase.getRelativeOrigin(facing);
@@ -33,11 +35,12 @@ public class LevelRendererMixin {
             cir.setReturnValue(null);
         }
     }
-    
+
     @ModifyConstant(
         method = "renderWorldBounds",
         constant = @Constant(intValue = 256),
-        expect = 8
+        expect = 8,
+        require = 0
     )
     private int off$renderWorldBounds(int original) {
         return Offlimits.INSTANCE.getMaxBuildHeight();
